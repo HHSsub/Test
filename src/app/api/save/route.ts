@@ -115,7 +115,10 @@ export async function POST(request: NextRequest) {
           boardsToUpdate.set(board.id, { ...board, content: { ...board.content } });
         }
         const boardToUpdate = boardsToUpdate.get(board.id)!;
-        setNestedProperty(boardToUpdate.content, change.fieldPath, change.newValue);
+        const pathWithoutContent = change.fieldPath.startsWith('content.') 
+          ? change.fieldPath.substring(8) // "content." 제거
+          : change.fieldPath;
+        setNestedProperty(boardToUpdate.content, pathWithoutContent, change.newValue);
       }
     }
 
