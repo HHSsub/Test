@@ -124,29 +124,6 @@ export default function FinalCTABoard({ data }: Props) {
               </button>
             )}
           </div>
-          
-          {/* Supporting Visual / Media */}
-          <div className="mt-12">
-            {content.mediaType === "video" ? (
-              <VideoUpload
-                currentVideo={content.mediaSrc}
-                onVideoChange={(url) => handleVideoChange("mediaSrc", url)}
-                boardId={data.id}
-                fieldPath="content.mediaSrc"
-                className="aspect-video max-w-3xl mx-auto"
-                placeholderText="영상 업로드"
-              />
-            ) : (
-              <ImageUpload
-                currentImage={content.mediaSrc}
-                onImageChange={(url) => handleImageChange("mediaSrc", url)}
-                boardId={data.id}
-                fieldPath="content.mediaSrc"
-                className="aspect-video max-w-3xl mx-auto"
-                placeholderText="이미지 업로드"
-              />
-            )}
-          </div>
         </div>
       </div>
     </section>
