@@ -12,6 +12,7 @@ export interface HeroBoard extends BaseBoard {
   content: {
     headline: string;
     subheadline: string;
+    description?: string;  // ← 추가
     primaryCta: string;
     secondaryCta?: string;
     mediaType: "image" | "video";
@@ -95,6 +96,7 @@ export interface FinalCTABoard extends BaseBoard {
   content: {
     title: string;
     subtitle: string;
+    description?: string;  // ← 추가
     primaryCta: string;
     secondaryCta?: string;
     mediaType: "image" | "video";
