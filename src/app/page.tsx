@@ -11,6 +11,7 @@ import FinalCTABoard from "@/components/boards/FinalCTABoard";
 import { getEnabledBoards } from "@/lib/boards";
 import { Board } from "@/types/board";
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function Home() {
   const boards = await getEnabledBoards();
