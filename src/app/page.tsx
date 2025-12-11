@@ -10,6 +10,7 @@ import FAQBoard from "@/components/boards/FAQBoard";
 import FinalCTABoard from "@/components/boards/FinalCTABoard";
 import { getEnabledBoards } from "@/lib/boards";
 import { Board } from "@/types/board";
+export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const boards = await getEnabledBoards();
