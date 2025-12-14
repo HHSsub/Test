@@ -34,22 +34,23 @@ export default function BenefitsBoard({ data }: Props) {
   return (
     <section className="py-12 sm:py-16 md:py-24 bg-brand-darkgray">
       <div className="container mx-auto px-4 sm:px-6">
-        {/* Title */}
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white">
-            <EditableText
-              value={content.title}
-              onChange={(value) => handleChange("title", value)}
-              boardId={data.id}
-              fieldPath="content.title"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white"
-              multiline
-            />
-          </h2>
-        </div>
+        <div className="max-w-6xl mx-auto">
+          {/* Title */}
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white">
+              <EditableText
+                value={content.title}
+                onChange={(value) => handleChange("title", value)}
+                boardId={data.id}
+                fieldPath="content.title"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white"
+                multiline
+              />
+            </h2>
+          </div>
 
-        {/* Benefit Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          {/* Benefit Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {content.cards.map((card, index) => (
             <div key={index} className="text-center space-y-3 sm:space-y-4">
               {/* Icon */}
@@ -68,6 +69,7 @@ export default function BenefitsBoard({ data }: Props) {
               </p>
             </div>
           ))}
+          </div>
         </div>
       </div>
     </section>

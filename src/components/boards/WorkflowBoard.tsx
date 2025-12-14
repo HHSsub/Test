@@ -34,31 +34,32 @@ export default function WorkflowBoard({ data }: Props) {
   return (
     <section className="py-12 sm:py-16 md:py-24 bg-brand-darkgray">
       <div className="container mx-auto px-4 sm:px-6">
-        {/* Title */}
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
-            <EditableText
-              value={content.title}
-              onChange={(value) => handleChange("title", value)}
-              boardId={data.id}
-              fieldPath="content.title"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white"
-              multiline
-            />
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-400">
-            <EditableText
-              value={content.description}
-              onChange={(value) => handleChange("description", value)}
-              boardId={data.id}
-              fieldPath="content.description"
-              className="text-base sm:text-lg md:text-xl text-gray-400"
-            />
-          </p>
-        </div>
+        <div className="max-w-6xl mx-auto">
+          {/* Title */}
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
+              <EditableText
+                value={content.title}
+                onChange={(value) => handleChange("title", value)}
+                boardId={data.id}
+                fieldPath="content.title"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white"
+                multiline
+              />
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-400">
+              <EditableText
+                value={content.description}
+                onChange={(value) => handleChange("description", value)}
+                boardId={data.id}
+                fieldPath="content.description"
+                className="text-base sm:text-lg md:text-xl text-gray-400"
+              />
+            </p>
+          </div>
 
-        {/* Steps */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+          {/* Steps */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
           {content.steps.map((step, index) => (
             <div key={index} className="text-center space-y-3 sm:space-y-4">
               {/* Icon */}
@@ -77,6 +78,7 @@ export default function WorkflowBoard({ data }: Props) {
               </p>
             </div>
           ))}
+          </div>
         </div>
       </div>
     </section>

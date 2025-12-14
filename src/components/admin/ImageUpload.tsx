@@ -120,48 +120,50 @@ export default function ImageUpload({
         className="hidden"
       />
 
-      {/* Image display / placeholder */}
-      <div
-        onClick={handleClick}
-        className={`relative w-full h-full rounded-lg overflow-hidden cursor-pointer transition-all ${
-          displayImage
-            ? 'hover:opacity-80'
-            : 'bg-gradient-to-br from-brand-purple/10 to-brand-blue/10 hover:from-brand-purple/20 hover:to-brand-blue/20'
-        } ${isUploading ? 'animate-pulse' : ''}`}
-      >
-        {displayImage ? (
+      {displayImage ? (
+        // Image exists: show image + change button
+        <div className="relative w-full h-full">
           <img
             src={displayImage}
             alt="Upload preview"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-lg"
           />
-        ) : (
+          
+          {/* Change image button - appears on hover */}
+          <button
+            onClick={handleClick}
+            className="absolute top-4 right-4 bg-brand-purple/90 hover:bg-brand-purple text-white px-4 py-2 rounded-lg text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity neon-glow-purple"
+          >
+            이미지 변경
+          </button>
+        </div>
+      ) : (
+        // No image: show upload area
+        <div
+          onClick={handleClick}
+          className="relative w-full h-full rounded-lg overflow-hidden cursor-pointer transition-all bg-gradient-to-br from-brand-purple/10 to-brand-blue/10 hover:from-brand-purple/20 hover:to-brand-blue/20"
+        >
           <div className="flex items-center justify-center h-full">
-            <span className="text-gray-600 text-sm">{placeholderText}</span>
-          </div>
-        )}
-
-        {/* Overlay on hover */}
-        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <div className="text-white text-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-12 w-12 mx-auto mb-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            <p className="text-sm">이미지 업로드</p>
+            <div className="text-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 mx-auto mb-2 text-gray-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <span className="text-gray-600 text-sm">{placeholderText}</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Upload status */}
       {isUploading && (

@@ -71,31 +71,32 @@ export default function ProblemSolutionBoard({ data }: Props) {
   return (
     <section className="py-12 sm:py-16 md:py-24 bg-brand-black">
       <div className="container mx-auto px-4 sm:px-6">
-        {/* Title */}
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
-            <EditableText
-              value={content.title}
-              onChange={(value) => handleChange("title", value)}
-              boardId={data.id}
-              fieldPath="content.title"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white"
-              multiline
-            />
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-400">
-            <EditableText
-              value={content.subtitle}
-              onChange={(value) => handleChange("subtitle", value)}
-              boardId={data.id}
-              fieldPath="content.subtitle"
-              className="text-base sm:text-lg md:text-xl text-gray-400"
-            />
-          </p>
-        </div>
+        <div className="max-w-6xl mx-auto">
+          {/* Title */}
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
+              <EditableText
+                value={content.title}
+                onChange={(value) => handleChange("title", value)}
+                boardId={data.id}
+                fieldPath="content.title"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white"
+                multiline
+              />
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-400">
+              <EditableText
+                value={content.subtitle}
+                onChange={(value) => handleChange("subtitle", value)}
+                boardId={data.id}
+                fieldPath="content.subtitle"
+                className="text-base sm:text-lg md:text-xl text-gray-400"
+              />
+            </p>
+          </div>
 
-        {/* Solution Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+          {/* Solution Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
           {content.cards.map((card, index) => (
             <div key={index} className="bg-brand-midgray rounded-lg p-4 sm:p-6 space-y-3 sm:space-y-4 hover:bg-brand-midgray/80 transition-colors">
               {/* Image Upload */}
@@ -132,6 +133,7 @@ export default function ProblemSolutionBoard({ data }: Props) {
               </p>
             </div>
           ))}
+          </div>
         </div>
       </div>
     </section>

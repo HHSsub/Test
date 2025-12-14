@@ -118,7 +118,7 @@ export default function VideoUpload({
   const displayVideo = previewUrl || currentVideo;
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative group ${className}`}>
       {/* Hidden file input */}
       <input
         ref={fileInputRef}
@@ -153,7 +153,7 @@ export default function VideoUpload({
         // No video: show upload area
         <div
           onClick={handleClick}
-          className="relative w-full h-full rounded-lg overflow-hidden cursor-pointer transition-all bg-gradient-to-br from-brand-purple/10 to-brand-blue/10 hover:from-brand-purple/20 hover:to-brand-blue/20 group"
+          className="relative w-full h-full rounded-lg overflow-hidden cursor-pointer transition-all bg-gradient-to-br from-brand-purple/10 to-brand-blue/10 hover:from-brand-purple/20 hover:to-brand-blue/20"
         >
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
