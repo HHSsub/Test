@@ -31,6 +31,44 @@ export default function PricingBoard({ data }: Props) {
     setContent((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handlePlanChange = (index: number, field: 'name' | 'price' | 'cta', value: string) => {
+    const oldValue = content.plans[index][field];
+    
+    addContentChange({
+      boardId: data.id,
+      fieldPath: `content.plans[${index}].${field}`,
+      oldValue,
+      newValue: value,
+      type: 'text',
+    });
+
+    setContent((prev) => {
+      const newPlans = [...prev.plans];
+      newPlans[index] = { ...newPlans[index], [field]: value };
+      return { ...prev, plans: newPlans };
+    });
+  };
+
+  const handleFeatureChange = (planIndex: number, featureIndex: number, value: string) => {
+    const oldValue = content.plans[planIndex].features[featureIndex];
+    
+    addContentChange({
+      boardId: data.id,
+      fieldPath: `content.plans[${planIndex}].features[${featureIndex}]`,
+      oldValue,
+      newValue: value,
+      type: 'text',
+    });
+
+    setContent((prev) => {
+      const newPlans = [...prev.plans];
+      const newFeatures = [...newPlans[planIndex].features];
+      newFeatures[featureIndex] = value;
+      newPlans[planIndex] = { ...newPlans[planIndex], features: newFeatures };
+      return { ...prev, plans: newPlans };
+    });
+  };
+
   return (
     <section className="py-12 sm:py-16 md:py-24 bg-brand-darkgray">
       <div className="container mx-auto px-4 sm:px-6">
@@ -70,12 +108,24 @@ export default function PricingBoard({ data }: Props) {
             >
               {/* Plan Name */}
               <h3 className={`text-xl sm:text-2xl font-bold ${plan.highlighted ? 'text-brand-purple' : 'text-white'}`}>
-                {plan.name}
+                <EditableText
+                  value={plan.name}
+                  onChange={(value) => handlePlanChange(index, "name", value)}
+                  boardId={data.id}
+                  fieldPath={`content.plans[${index}].name`}
+                  className={`text-xl sm:text-2xl font-bold ${plan.highlighted ? 'text-brand-purple' : 'text-white'}`}
+                />
               </h3>
               
               {/* Price */}
               <div className={`text-2xl sm:text-3xl font-bold ${plan.highlighted ? 'text-white' : 'text-white'}`}>
-                {plan.price}
+                <EditableText
+                  value={plan.price}
+                  onChange={(value) => handlePlanChange(index, "price", value)}
+                  boardId={data.id}
+                  fieldPath={`content.plans[${index}].price`}
+                  className={`text-2xl sm:text-3xl font-bold ${plan.highlighted ? 'text-white' : 'text-white'}`}
+                />
               </div>
               
               {/* Features */}
@@ -83,7 +133,15 @@ export default function PricingBoard({ data }: Props) {
                 {plan.features.map((feature, fIndex) => (
                   <li key={fIndex} className="flex items-start">
                     <span className={`mr-2 ${plan.highlighted ? 'text-brand-purple' : 'text-brand-blue'}`}>✓</span>
-                    <span className={plan.highlighted ? 'text-gray-300' : 'text-gray-300'}>{feature}</span>
+                    <span className={plan.highlighted ? 'text-gray-300' : 'text-gray-300'}>
+                      <EditableText
+                        value={feature}
+                        onChange={(value) => handleFeatureChange(index, fIndex, value)}
+                        boardId={data.id}
+                        fieldPath={`content.plans[${index}].features[${fIndex}]`}
+                        className={plan.highlighted ? 'text-gray-300' : 'text-gray-300'}
+                      />
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -94,7 +152,13 @@ export default function PricingBoard({ data }: Props) {
                   ? 'bg-brand-purple hover:bg-brand-purple/80 text-white neon-glow-purple' 
                   : 'bg-brand-purple/80 hover:bg-brand-purple text-white'
               }`}>
-                {plan.cta}
+                <EditableText
+                  value={plan.cta}
+                  onChange={(value) => handlePlanChange(index, "cta", value)}
+                  boardId={data.id}
+                  fieldPath={`content.plans[${index}].cta`}
+                  className="font-semibold"
+                />
               </button>
             </div>
           ))}

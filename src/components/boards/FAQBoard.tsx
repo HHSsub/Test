@@ -32,6 +32,24 @@ export default function FAQBoard({ data }: Props) {
     setContent((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleItemChange = (index: number, field: 'question' | 'answer', value: string) => {
+    const oldValue = content.items[index][field];
+    
+    addContentChange({
+      boardId: data.id,
+      fieldPath: `content.items[${index}].${field}`,
+      oldValue,
+      newValue: value,
+      type: 'text',
+    });
+
+    setContent((prev) => {
+      const newItems = [...prev.items];
+      newItems[index] = { ...newItems[index], [field]: value };
+      return { ...prev, items: newItems };
+    });
+  };
+
   return (
     <section className="py-12 sm:py-16 md:py-24 bg-brand-black">
       <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
@@ -68,7 +86,13 @@ export default function FAQBoard({ data }: Props) {
                 className="flex items-center justify-between w-full text-left"
               >
                 <h3 className="text-base sm:text-lg font-semibold text-white pr-4">
-                  {item.question}
+                  <EditableText
+                    value={item.question}
+                    onChange={(value) => handleItemChange(index, "question", value)}
+                    boardId={data.id}
+                    fieldPath={`content.items[${index}].question`}
+                    className="text-base sm:text-lg font-semibold text-white"
+                  />
                 </h3>
                 <span className="text-brand-purple text-2xl flex-shrink-0">
                   {openIndex === index ? "−" : "+"}
@@ -78,7 +102,14 @@ export default function FAQBoard({ data }: Props) {
               {/* Answer */}
               {openIndex === index && (
                 <p className="mt-4 text-gray-400 leading-relaxed">
-                  {item.answer}
+                  <EditableText
+                    value={item.answer}
+                    onChange={(value) => handleItemChange(index, "answer", value)}
+                    boardId={data.id}
+                    fieldPath={`content.items[${index}].answer`}
+                    className="text-gray-400 leading-relaxed"
+                    multiline
+                  />
                 </p>
               )}
             </div>

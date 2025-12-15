@@ -31,6 +31,24 @@ export default function WorkflowBoard({ data }: Props) {
     setContent((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleStepChange = (index: number, field: 'title' | 'description', value: string) => {
+    const oldValue = content.steps[index][field];
+    
+    addContentChange({
+      boardId: data.id,
+      fieldPath: `content.steps[${index}].${field}`,
+      oldValue,
+      newValue: value,
+      type: 'text',
+    });
+
+    setContent((prev) => {
+      const newSteps = [...prev.steps];
+      newSteps[index] = { ...newSteps[index], [field]: value };
+      return { ...prev, steps: newSteps };
+    });
+  };
+
   return (
     <section className="py-12 sm:py-16 md:py-24 bg-brand-darkgray">
       <div className="container mx-auto px-4 sm:px-6">
@@ -69,12 +87,25 @@ export default function WorkflowBoard({ data }: Props) {
               
               {/* Title */}
               <h3 className="text-xl sm:text-2xl font-bold text-white">
-                {step.title}
+                <EditableText
+                  value={step.title}
+                  onChange={(value) => handleStepChange(index, "title", value)}
+                  boardId={data.id}
+                  fieldPath={`content.steps[${index}].title`}
+                  className="text-xl sm:text-2xl font-bold text-white"
+                />
               </h3>
               
               {/* Description */}
               <p className="text-sm sm:text-base text-gray-400">
-                {step.description}
+                <EditableText
+                  value={step.description}
+                  onChange={(value) => handleStepChange(index, "description", value)}
+                  boardId={data.id}
+                  fieldPath={`content.steps[${index}].description`}
+                  className="text-sm sm:text-base text-gray-400"
+                  multiline
+                />
               </p>
             </div>
           ))}
