@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin, STORAGE_BUCKET, VIDEOS_FOLDER } from '@/lib/supabase';
 import { upsertMediaMapping, generateCdnUrl } from '@/lib/mediaMapping';
 
+// Disable body parsing limit for file uploads
+export const runtime = 'nodejs';
+export const maxDuration = 60;
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -59,6 +63,10 @@ export async function POST(request: NextRequest) {
     let supabaseAdmin;
     try {
       supabaseAdmin = getSupabaseAdmin();
+      console.log('Supabase admin client created successfully');
+      console.log('Bucket:', STORAGE_BUCKET);
+      console.log('Path:', supabasePath);
+      console.log('File size:', buffer.length);
     } catch (error) {
       console.error('Failed to create Supabase admin client:', error);
       return NextResponse.json(
@@ -67,18 +75,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
-      .from(STORAGE_BUCKET)
-      .upload(supabasePath, buffer, {
-        contentType: file.type,
-        cacheControl: '3600',
-        upsert: true,
+    try {
+      // Use direct Storage API call with service role key
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+      
+      const uploadUrl = `${supabaseUrl}/storage/v1/object/${STORAGE_BUCKET}/${supabasePath}`;
+      
+      const uploadResponse = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${serviceRoleKey}`,
+          'Content-Type': file.type,
+          'x-upsert': 'true',
+          'Cache-Control': '3600',
+        },
+        body: buffer,
       });
 
-    if (uploadError) {
-      console.error('Supabase upload error:', uploadError);
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        console.error('Direct Storage API error:', {
+          status: uploadResponse.status,
+          statusText: uploadResponse.statusText,
+          errorText,
+        });
+        return NextResponse.json(
+          { success: false, error: `업로드 실패: ${uploadResponse.statusText} (${uploadResponse.status})` },
+          { status: 500 }
+        );
+      }
+
+      const uploadData = await uploadResponse.json();
+      console.log('Upload successful:', uploadData);
+    } catch (storageError: any) {
+      console.error('Storage upload exception:', {
+        message: storageError?.message,
+        status: storageError?.status,
+        statusCode: storageError?.statusCode,
+        response: storageError?.response,
+        error: storageError,
+      });
       return NextResponse.json(
-        { success: false, error: `업로드 실패: ${uploadError.message}` },
+        { success: false, error: `Storage 오류: ${storageError?.message || '알 수 없는 오류'}` },
         { status: 500 }
       );
     }
