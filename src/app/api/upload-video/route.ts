@@ -7,8 +7,17 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
+  // Immediate logging to verify route is being called
+  console.log('[UPLOAD-VIDEO] Route called at:', new Date().toISOString());
+  console.log('[UPLOAD-VIDEO] Request headers:', {
+    'content-type': request.headers.get('content-type'),
+    'content-length': request.headers.get('content-length'),
+  });
+  
   try {
+    console.log('[UPLOAD-VIDEO] Parsing formData...');
     const formData = await request.formData();
+    console.log('[UPLOAD-VIDEO] FormData parsed successfully');
     const file = formData.get('file') as File;
     const logicalKey = formData.get('logicalKey') as string;
     const boardId = formData.get('boardId') as string;
