@@ -109,7 +109,6 @@ export async function POST(request: NextRequest) {
       if (uploadError) {
         console.error('Supabase Storage upload error:', {
           message: uploadError.message,
-          statusCode: uploadError.statusCode,
           error: uploadError,
           fileName: file.name,
           path: supabasePath,
@@ -117,7 +116,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           { 
             success: false, 
-            error: `업로드 실패: ${uploadError.message} (${uploadError.statusCode || 'unknown'})` 
+            error: `업로드 실패: ${uploadError.message}` 
           },
           { status: 500 }
         );
