@@ -9,6 +9,17 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Server-side Supabase client with service role key for admin operations
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+export const supabaseAdmin = supabaseServiceRoleKey
+  ? createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    })
+  : null;
+
 // Storage configuration
 export const STORAGE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || 'studio_upnexx';
 export const IMAGES_FOLDER = process.env.NEXT_PUBLIC_IMAGES_FOLDER || 'images';

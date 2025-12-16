@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase, STORAGE_BUCKET, IMAGES_FOLDER } from '@/lib/supabase';
+import { supabaseAdmin, STORAGE_BUCKET, IMAGES_FOLDER } from '@/lib/supabase';
 import { upsertMediaMapping, generateCdnUrl } from '@/lib/mediaMapping';
 
 export async function POST(request: NextRequest) {
@@ -55,8 +55,15 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Upload to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    // Upload to Supabase Storage using admin client
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { success: false, error: '서버 설정 오류: Supabase 서비스 역할 키가 설정되지 않았습니다.' },
+        { status: 500 }
+      );
+    }
+
+    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
       .from(STORAGE_BUCKET)
       .upload(supabasePath, buffer, {
         contentType: file.type,
