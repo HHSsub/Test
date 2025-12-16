@@ -12,6 +12,11 @@ export async function POST(request: NextRequest) {
   console.log('[UPLOAD-VIDEO] Request headers:', {
     'content-type': request.headers.get('content-type'),
     'content-length': request.headers.get('content-length'),
+    'user-agent': request.headers.get('user-agent'),
+    'referer': request.headers.get('referer'),
+    'origin': request.headers.get('origin'),
+    'x-forwarded-for': request.headers.get('x-forwarded-for'),
+    'x-vercel-id': request.headers.get('x-vercel-id'),
   });
   
   try {
@@ -105,6 +110,9 @@ export async function POST(request: NextRequest) {
         contentType,
         fileSize: buffer.length,
         fileType: file.type,
+        fileLastModified: file.lastModified,
+        // Check first few bytes to detect file signature
+        fileSignature: Array.from(new Uint8Array(buffer.slice(0, 12))).map(b => b.toString(16).padStart(2, '0')).join(' '),
       });
       
       const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
