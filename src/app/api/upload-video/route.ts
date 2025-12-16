@@ -29,8 +29,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file type
-    if (!file.type.startsWith('video/')) {
+    // Validate file type - be more lenient with MIME type detection
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    const validVideoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+    const isValidVideoFile = file.type.startsWith('video/') || 
+                            (fileExtension && validVideoExtensions.includes(fileExtension));
+    
+    if (!isValidVideoFile) {
+      console.error('Invalid file type:', {
+        fileName: file.name,
+        fileType: file.type,
+        fileExtension,
+      });
       return NextResponse.json(
         { success: false, error: '영상 파일만 업로드 가능합니다.' },
         { status: 400 }
@@ -46,13 +56,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate unique filename
+    // Generate unique filename - ensure safe filename
     const timestamp = Date.now();
     const randomStr = Math.random().toString(36).substring(2, 8);
-    const ext = file.name.split('.').pop();
+    const ext = fileExtension || 'mp4';
     const filename = `${timestamp}_${randomStr}.${ext}`;
 
-    // Construct Supabase storage path
+    // Construct Supabase storage path - URL encode the path
     const supabasePath = `${VIDEOS_FOLDER}/${filename}`;
 
     // Convert File to ArrayBuffer
@@ -76,37 +86,43 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      // Use direct Storage API call with service role key
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+      // Use Supabase JS client for better path handling
+      const contentType = file.type || 'video/mp4';
       
-      const uploadUrl = `${supabaseUrl}/storage/v1/object/${STORAGE_BUCKET}/${supabasePath}`;
-      
-      const uploadResponse = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${serviceRoleKey}`,
-          'Content-Type': file.type,
-          'x-upsert': 'true',
-          'Cache-Control': '3600',
-        },
-        body: buffer,
+      console.log('Upload attempt:', {
+        originalFileName: file.name,
+        fileName: filename,
+        path: supabasePath,
+        contentType,
+        fileSize: buffer.length,
+        fileType: file.type,
       });
+      
+      const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+        .from(STORAGE_BUCKET)
+        .upload(supabasePath, buffer, {
+          contentType: contentType,
+          cacheControl: '3600',
+          upsert: true,
+        });
 
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        console.error('Direct Storage API error:', {
-          status: uploadResponse.status,
-          statusText: uploadResponse.statusText,
-          errorText,
+      if (uploadError) {
+        console.error('Supabase Storage upload error:', {
+          message: uploadError.message,
+          statusCode: uploadError.statusCode,
+          error: uploadError,
+          fileName: file.name,
+          path: supabasePath,
         });
         return NextResponse.json(
-          { success: false, error: `업로드 실패: ${uploadResponse.statusText} (${uploadResponse.status})` },
+          { 
+            success: false, 
+            error: `업로드 실패: ${uploadError.message} (${uploadError.statusCode || 'unknown'})` 
+          },
           { status: 500 }
         );
       }
 
-      const uploadData = await uploadResponse.json();
       console.log('Upload successful:', uploadData);
     } catch (storageError: any) {
       console.error('Storage upload exception:', {
