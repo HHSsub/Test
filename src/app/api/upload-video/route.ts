@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin, STORAGE_BUCKET, VIDEOS_FOLDER } from '@/lib/supabase';
+import { getSupabaseAdmin, STORAGE_BUCKET, VIDEOS_FOLDER } from '@/lib/supabase';
 import { upsertMediaMapping, generateCdnUrl } from '@/lib/mediaMapping';
 
 export async function POST(request: NextRequest) {
@@ -56,7 +56,11 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
 
     // Upload to Supabase Storage using admin client
-    if (!supabaseAdmin) {
+    let supabaseAdmin;
+    try {
+      supabaseAdmin = getSupabaseAdmin();
+    } catch (error) {
+      console.error('Failed to create Supabase admin client:', error);
       return NextResponse.json(
         { success: false, error: '서버 설정 오류: Supabase 서비스 역할 키가 설정되지 않았습니다.' },
         { status: 500 }
@@ -68,7 +72,7 @@ export async function POST(request: NextRequest) {
       .upload(supabasePath, buffer, {
         contentType: file.type,
         cacheControl: '3600',
-        upsert: false,
+        upsert: true,
       });
 
     if (uploadError) {
